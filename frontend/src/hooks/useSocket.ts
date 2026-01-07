@@ -44,7 +44,6 @@ export function useSocket() {
     };
   }, []);
 
-  /** 🔍 Start searching for a partner */
   function search() {
     setError(null);
     setMessages([]);
@@ -52,7 +51,6 @@ export function useSocket() {
     setStatus("SEARCHING");
   }
 
-  /** 💬 Send message */
   function sendMessage(message: string) {
     if (!message.trim()) return;
 
@@ -60,7 +58,6 @@ export function useSocket() {
     setMessages(prev => [...prev, { message, self: true }]);
   }
 
-  /** ⏭ Skip current partner and re-match */
   function skip() {
     setError(null);
     setMessages([]);
@@ -68,7 +65,6 @@ export function useSocket() {
     setStatus("SEARCHING");
   }
 
-  /** ❌ End chat and go idle */
   function endChat() {
     setError(null);
     setMessages([]);
