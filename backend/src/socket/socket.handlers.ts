@@ -13,11 +13,9 @@ import { MessagePayload } from "../types/socket.types";
 
 export function registerSocketHandlers(io: Server, socket: Socket) {
 
-  /* ===================== SEARCH ===================== */
   socket.on(SOCKET_EVENTS.SEARCH, async () => {
     await addToQueue(socket.id);
 
-    // 🔥 PASS io HERE
     const match = await matchUsers(io);
     if (!match) return;
 
@@ -34,7 +32,6 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
     io.to(match[1]).emit(SOCKET_EVENTS.MATCHED);
   });
 
-  /* ===================== MESSAGE ===================== */
   socket.on(SOCKET_EVENTS.MESSAGE, async (payload: MessagePayload) => {
     if (!isValidMessage(payload.message)) {
       socket.emit(SOCKET_EVENTS.ERROR, ERROR_MESSAGES.INVALID_MESSAGE);
@@ -57,7 +54,6 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
     }
   });
 
-  /* ===================== SKIP (AUTO RE-MATCH) ===================== */
   socket.on(SOCKET_EVENTS.SKIP, async () => {
     await removeFromQueue(socket.id);
 
@@ -76,7 +72,6 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
 
     await addToQueue(socket.id);
 
-    // 🔥 PASS io HERE TOO
     const match = await matchUsers(io);
     if (!match) return;
 
@@ -108,13 +103,10 @@ export function registerSocketHandlers(io: Server, socket: Socket) {
     io.to(partner).emit(SOCKET_EVENTS.PARTNER_LEFT);
   }
 
-  // ❌ DO NOT addToQueue
-  // ❌ DO NOT matchUsers
-  // user is now IDLE
+  
 });
 
   
-  /* ===================== DISCONNECT ===================== */
   socket.on("disconnect", async () => {
     await removeFromQueue(socket.id);
 
