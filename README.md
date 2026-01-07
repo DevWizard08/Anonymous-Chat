@@ -4,8 +4,8 @@ A full-stack anonymous one-to-one real-time chat application where users are ran
 
 ## 🔗 Live URLs
 
-- **Frontend**: https://your-app.vercel.app
-- **Backend**: https://your-app.onrender.com
+- **Frontend**: https://anonymous-chat-sigma-pearl.vercel.app/
+- **Backend**:  https://anonymous-chat-j8iu.onrender.com
 
 ## 🧠 Use Case
 
