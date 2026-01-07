@@ -17,3 +17,6 @@ export const LIMITS = {
   MAX_MESSAGE_LENGTH: 500,
   MESSAGES_PER_MINUTE: 20,
 };
+export const GENERAL = {
+    SERVER_RUNNING:"Anonymous chat server is running.",
+}
