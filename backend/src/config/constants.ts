@@ -5,6 +5,7 @@ export const SOCKET_EVENTS = {
   SKIP: "skip",
   PARTNER_LEFT: "partner_left",
   ERROR: "error",
+  END_CHAT:"end_chat"
 };
 
 export const ERROR_MESSAGES = {

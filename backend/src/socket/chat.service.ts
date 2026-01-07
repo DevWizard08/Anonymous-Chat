@@ -1,36 +1,53 @@
+import { redis } from "../config/redis";
 
-export const activeChats = new Map<string, string>();
+const ACTIVE_CHAT_PREFIX = "active_chat:";
+const ACTIVE_SESSION_PREFIX = "active_session:";
 
-export const activeSessions = new Map<string, string>();
-
-
-export function startChat(
+/**
+ * Start a chat between two users
+ */
+export async function startChat(
   userA: string,
   userB: string,
   sessionId: string
 ) {
-  activeChats.set(userA, userB);
-  activeChats.set(userB, userA);
+  // store partner mapping
+  await redis.set(`${ACTIVE_CHAT_PREFIX}${userA}`, userB);
+  await redis.set(`${ACTIVE_CHAT_PREFIX}${userB}`, userA);
 
-  activeSessions.set(userA, sessionId);
-  activeSessions.set(userB, sessionId);
+  // store session mapping
+  await redis.set(`${ACTIVE_SESSION_PREFIX}${userA}`, sessionId);
+  await redis.set(`${ACTIVE_SESSION_PREFIX}${userB}`, sessionId);
 }
 
-
-export function endChat(socketId: string): {
+/**
+ * End chat for a socket
+ */
+export async function endChat(
+  socketId: string
+): Promise<{
   partner?: string;
   sessionId?: string;
-} {
-  const partner = activeChats.get(socketId);
-  const sessionId = activeSessions.get(socketId);
+}> {
+  const partner = await redis.get(`${ACTIVE_CHAT_PREFIX}${socketId}`);
+  const sessionId = await redis.get(`${ACTIVE_SESSION_PREFIX}${socketId}`);
 
-  activeChats.delete(socketId);
-  activeSessions.delete(socketId);
+  // cleanup current user
+  await redis.del(`${ACTIVE_CHAT_PREFIX}${socketId}`);
+  await redis.del(`${ACTIVE_SESSION_PREFIX}${socketId}`);
 
+  // cleanup partner
   if (partner) {
-    activeChats.delete(partner);
-    activeSessions.delete(partner);
+    await redis.del(`${ACTIVE_CHAT_PREFIX}${partner}`);
+    await redis.del(`${ACTIVE_SESSION_PREFIX}${partner}`);
   }
 
-  return { partner, sessionId };
+  return { partner: partner || undefined, sessionId: sessionId || undefined };
+}
+
+/**
+ * Get chat partner for a socket
+ */
+export async function getPartner(socketId: string): Promise<string | null> {
+  return redis.get(`${ACTIVE_CHAT_PREFIX}${socketId}`);
 }

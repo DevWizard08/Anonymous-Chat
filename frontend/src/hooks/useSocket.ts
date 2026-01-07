@@ -68,9 +68,10 @@ export function useSocket() {
   function endChat() {
     setError(null);
     setMessages([]);
-    socketRef.current?.emit(SOCKET_EVENTS.SKIP);
+    socketRef.current?.emit(SOCKET_EVENTS.END_CHAT);
     setStatus("IDLE");
   }
+  
 
   return {
     status,
